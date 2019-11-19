@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="css/reset.css">
     <link rel="stylesheet" type="text/css" href="css/iconfont.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" href="./js/bootstrap/css/bootstrap.min.css">
 </head>
 
 <body>
@@ -23,14 +24,67 @@
             <form class="login_form">
                 <i class="iconfont icon-user"></i>
                 <i class="iconfont icon-key"></i>
-                <input type="text" class="input_txt" placeholder="邮箱/手机号">
-                <input type="password" class="input_pass" placeholder="密码">
-                <input type="submit" class="input_sub" value="登 录">
+                <input type="text" id="myname" class="input_txt" placeholder="邮箱/手机号">
+                <input type="password" id="mypassword" class="input_pass" placeholder="密码">
+                <input type="button" id="btn" class="input_sub" value="登 录">
             </form>
         </div>
 
-    </div> 
+    </div>
+    <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">系统提示</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="msgInfo">不能为空</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <script src="./js/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+        // 先获取用户名和密码
+        // 判断是否为空
+        // 发请求，根据返回结果提示用户
+        $('#btn').click(function() {
+            var myname = $('#myname').val().trim();
+            var mypassword = $('#mypassword').val().trim();
+            if (myname === '' || mypassword === '') {
+                $('#msgInfo').text('不能为空');
+                $('#myModal').modal('show');
+                return;
+            }
 
+            // 发送请求：
+            $.post('http://localhost:8000/admin/login', {
+                    user_name: myname,
+                    password: mypassword
+                },
+                function(res) {
+                    console.log(res);
+                    // 根据输入内容作出判断：
+                    if (res.code == 200) {
+                        location.href = './index.html';
+                    } else if (res.code == 400) {
+                        $('#msgInfo').text(res.msg);
+                        $('#myModal').modal('show')
+                    }
+
+                }
+            )
+        })
+    </script>
 </body>
 
 </html>
