@@ -106,33 +106,34 @@
         }
     </script>
     <script>
-        // 获取 退出元素
-        // 添加点击事件
+        var user = {
+                Logout: function() {
+                    $.post('http://localhost:8000/admin/logout', function(res) {
+                        console.log(res);
+                        if (res.code == 200) {
+                            location.href = "./login.html"
+                        }
+
+                    })
+                },
+                Getuser: function() {
+                    $.get('http://localhost:8000/admin/getuser', function(res) {
+                        $('#username').text(res.data.nickname)
+                        $('.userimg').prop('src', res.data.user_pic)
+                        console.log(res);
+
+
+                    })
+                }
+            }
+            // 获取 退出元素
+            // 添加点击事件
         $('#btn').click(function() {
             // console.log(123);
-            $.post('http://localhost:8000/admin/logout', function(res) {
-                console.log(res);
-                if (res.code == 200) {
-                    location.href = "./login.html"
-                }
-
-            })
+            user.Logout();
 
         })
-
-        var username = $('#username').text();
-        var userimg = $('.userimg').prop('src');
-
-        $.get('http://localhost:8000/admin/getuser', {
-            nickname: username,
-            user_pic: userimg
-        }, function(res) {
-            $('#username').text(res.data.nickname)
-            $('.userimg').prop('src', res.data.user_pic)
-            console.log(res);
-
-
-        })
+        user.Getuser()
     </script>
 </body>
 
