@@ -54,6 +54,31 @@
     <script src="./js/jquery-1.12.4.min.js"></script>
     <script src="./js/bootstrap/js/bootstrap.min.js"></script>
     <script>
+        // 优化代码：
+        var user = {
+            Login: // 发送请求：
+                function(myname, mypassword) {
+                $.post('http://localhost:8000/admin/login', {
+                        user_name: myname,
+                        password: mypassword
+                    },
+                    function(res) {
+                        console.log(res);
+                        // 根据输入内容作出判断：
+                        if (res.code == 200) {
+                            location.href = './index.html';
+                        } else if (res.code == 400) {
+                            $('#msgInfo').text(res.msg);
+                            $('#myModal').modal('show')
+                        }
+
+                    }
+                )
+            }
+
+
+        }
+
         // 先获取用户名和密码
         // 判断是否为空
         // 发请求，根据返回结果提示用户
@@ -65,24 +90,8 @@
                 $('#myModal').modal('show');
                 return;
             }
+            user.Login(myname, mypassword);
 
-            // 发送请求：
-            $.post('http://localhost:8000/admin/login', {
-                    user_name: myname,
-                    password: mypassword
-                },
-                function(res) {
-                    console.log(res);
-                    // 根据输入内容作出判断：
-                    if (res.code == 200) {
-                        location.href = './index.html';
-                    } else if (res.code == 400) {
-                        $('#msgInfo').text(res.msg);
-                        $('#myModal').modal('show')
-                    }
-
-                }
-            )
         })
     </script>
 </body>
