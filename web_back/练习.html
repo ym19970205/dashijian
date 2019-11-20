@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // function say(value) {
+        //     alert(value);
+        // }
+        // alert(say);
+        // alert(say('hi js.'));
+        // function say(value) {
+        //     alert(value);
+        // }
+
+        // function execute(someFunction, value) {
+        //     someFunction(value);
+        // }
+        // execute(say, 'hi js.');
+
+
+
+        // function execute(someFunction, value) {
+        //     someFunction(value);
+        // }
+        // execute(function(value) {
+        //     alert(value);
+        // }, 'hi js.');
+
+
+
+        function doSomething(callback) {
+            callback(1, 2);
+        }
+
+        function numberAdd(a, b) {
+            document.write(a + b);
+        }
+        doSomething(numberAdd); //3
+    </script>
+</body>
+
+</html>
