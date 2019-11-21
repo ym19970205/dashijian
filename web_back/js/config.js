@@ -1,0 +1,11 @@
+var baseUrl = 'http://localhost:8000/'
+
+// 把所有要用到的接口地址进行集中管理
+var APIURLS = {
+  user_Login: baseUrl + 'admin/login',
+  user_Logout: baseUrl + 'admin/logout',
+  user_Getuser: baseUrl + 'admin/getuser',
+  category_show: baseUrl + 'admin/category_search',
+  category_del: baseUrl + 'admin/category_delete'
+
+}

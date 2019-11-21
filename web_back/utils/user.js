@@ -3,7 +3,7 @@ var baseURL = 'http://localhost:8000/';
 var user = {
   Login: // 发送请求：
     function(myname, mypassword, callback) {
-    $.post(baseURL + 'admin/login', {
+    $.post(APIURLS.user_Login, {
         user_name: myname,
         password: mypassword
       },
@@ -14,13 +14,13 @@ var user = {
     )
   },
   Logout: function(callback) {
-    $.post(baseURL + 'admin/logout', function(res) {
+    $.post(APIURLS.user_Logout, function(res) {
       callback(res)
 
     })
   },
   Getuser: function(callback) {
-    $.get(baseURL + 'admin/getuser', function(res) {
+    $.get(APIURLS.user_Getuser, function(res) {
       callback(res);
     })
   }
