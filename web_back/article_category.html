@@ -86,7 +86,7 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        <div class="form-group">
+                        <div class="form-group" id="id-del">
                             <label for="recipient-name" class="control-label">分类ID:</label>
                             <input type="text" class="form-control" id="item-edit-id">
                         </div>
@@ -213,8 +213,8 @@
             var id = $(this).attr('data_editid');
             var name = $(this).attr('data-edit-name');
             var slug = $(this).attr('data-edit-slug')
-            console.log(id, name, slug);
-            //    在input框显示：
+                // console.log(id, name, slug);
+                //    在input框显示：
             $('#item-edit-id').val(id);
             $('#item-edit-name').val(name);
             $('#item-edit-slug').val(slug);
@@ -224,14 +224,16 @@
             var name = $('#item-edit-name').val();
             var slug = $('#item-edit-slug').val();
             $('#editModal').modal('hide');
-            console.log(id, name, slug);
+            // console.log(id, name, slug);
             // 发送请求：
             category.edit(id, name, slug, function(res) {
-                console.log(res);
+                // console.log(res);
                 getShow();
             })
 
         })
+        $('#id-del').hide()
+
         $('#model_shutoff_edit').click(function() {
             $('#editModal').modal('hide');
 
