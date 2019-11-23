@@ -23,18 +23,14 @@
                 <div class="col-xs-6">
                     <form class="form-inline">
                         <select id="selCategory" name="" class="form-control input-sm">
-                            <option>所有分类</option>
-                            <option>未分类</option>
-                            <option>奇趣事</option>
-                            <option>会生活</option>
-                            <option>爱旅行</option>
+                            
                         </select>
                         <select id="selStatus" name="" class="form-control input-sm">
-                            <option>所有状态</option>
-                            <option value="drafted">草稿</option>
-                            <option value="published">已发布</option>
+                            <option value="">所有状态</option>
+                            <option value="草稿">草稿</option>
+                            <option value="已发布">已发布</option>
                         </select>
-                        <button id="btnSearch" class="btn btn-default btn-sm">筛选</button>
+                        <button id="btnSearch" class="btn btn-default btn-sm" type="button">筛选</button>
                     </form>
                 </div>
                 <div class="col-xs-6">
@@ -53,7 +49,7 @@
                         <th class="text-center" width="100">操作</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="articleContainer">
 
                     <!-- <tr>
                         <td>王积千造统最头</td>
@@ -74,18 +70,8 @@
             </table>
 
             <div class="row text-center">
-                <ul class="pagination pagination-sm">
-                    <li class="page-item first disabled"><a href="#" class="page-link">首页</a></li>
-                    <li class="page-item prev disabled"><a href="#" class="page-link">上一页</a></li>
-                    <li class="page-item active"><a href="#" class="page-link">1</a></li>
-                    <li class="page-item"><a href="#" class="page-link">2</a></li>
-                    <li class="page-item"><a href="#" class="page-link">3</a></li>
-                    <li class="page-item"><a href="#" class="page-link">4</a></li>
-                    <li class="page-item"><a href="#" class="page-link">5</a></li>
-                    <li class="page-item"><a href="#" class="page-link">6</a></li>
-                    <li class="page-item"><a href="#" class="page-link">7</a></li>
-                    <li class="page-item next"><a href="#" class="page-link">下一页</a></li>
-                    <li class="page-item last"><a href="#" class="page-link">尾页</a></li>
+                <ul class="pagination pagination-sm" id="pagination">
+
                 </ul>
             </div>
 
@@ -98,39 +84,130 @@
             window.parent.setMenu(1, 1);
         })
     </script>
+    <script src="./js/bootstrap/js/bootstrap.min.js"></script>
     <script src="./utils/article.js"></script>
     <script src="./js/config.js"></script>
     <script src="./js/template-web.js"></script>
-    <script type="text/html" id="art">
+    <script src="./js/jquery.twbsPagination.js"></script>
+    <script src="./utils/category.js"></script>
+    <!-- 定义一个获取的模板引擎，把想要传入的数据放到里面： -->
+    <script type="text/html" id="tem-table">
+
         {{each data item}}
         <tr>
             <td>{{item.title}}</td>
             <td>{{item.author}}</td>
             <td>{{item.type}}</td>
             <td class="text-center">{{item.date}}</td>
-
-
             <td class="text-center">{{item.state}}</td>
-
-
             <td class="text-center">
                 <a href="article_edit.html" data-edit-id="{{item.id}}" class="btn btn-default btn-xs">编辑</a>
-                <a href="javascript:deleteTr( 1005 );" data-del-id="{{item.id}}" class="btn btn-danger btn-xs">删除</a>
+                <a href="javascript:;" data-del-id="{{item.id}}" class="btn btn-danger btn-xs del">删除</a>
             </td>
         </tr>
         {{/each}}
     </script>
+    <!-- 获取文章类别的模板引擎： -->
+    <script type="text/html" id="tem-cate">
+        <option value="">所有分类</option>
+        {{each data item}}
+        <option value="{{item.id}}">{{item.name}}</option>
+        {{/each}}
+    </script>
+
     <script>
-        // 发请求：
-        article.show(function(res) {
-            console.log(res);
-            var htmlStr = template('art', res);
-            // console.log(htmlStr, res);
-            $('#articleContainer').html(htmlStr);
+        // 筛选功能：文章分类
+        category.show(function(res) {
+            // console.log(res);
+            var htmlStr = template('tem-cate', res);
+            // console.log(htmlStr);
+            // 把文章类别的字符串添加到文章列表中：
+            $('#selCategory').html(htmlStr);
 
 
         })
     </script>
+    <script>
+        // 发请求：
+        // 定义一个全局变量，表示当前要显示第几页
+        var curPage = 1;
+        var type = '';
+        var state = '';
+        var curTotalPage = '';
+        //表示当前查询总页数
+        getAndshow();
+
+        function getAndshow() {
+            article.show(curPage, type, state, function(res) {
+                // console.log(res);
+                // 1. 定义一个模板，打印出来看看，再渲染页面
+                var htmlStr = template('tem-table', res);
+                // 再把想要的结果加到对应的位置,数据获取结束
+                $('#articleContainer').html(htmlStr);
+
+                // 判断当前页和实际页数是否相同
+                if (curTotalPage != res.totalPage) {
+
+                    // console.log(curTotalPage, res.totalPage);
+                    $('#pagination').twbsPagination('destroy');
+                    curTotalPage = res.totalPage
+                }
+
+                // 2.分页功能
+                $('#pagination').twbsPagination({
+                    totalPages: res.totalPage, // 总页数
+                    visiblePages: 6, // 可见页数
+                    first: '首页',
+                    prev: '上一页',
+                    next: '下一页',
+                    last: '尾页',
+                    onPageClick: function(event, page) {
+                        curPage = page;
+                        // ①在外边设置一个全局变量curPage，当你点击第几页的时候把值值赋给它
+                        // console.log(event, page);
+                        // ②当点击完成后，重新获取一下数据
+                        getAndshow()
+
+                    }
+                });
+
+            })
+        }
+
+        // 筛选功能：
+        $('#btnSearch').click(function() {
+            // 1.获取这两个框的值：
+            type = $('#selCategory').val()
+            state = $('#selStatus').val()
+            console.log(type, state);
+            // 2.重新发送请求，需要传入两个参数type, state
+            getAndshow()
+
+        })
+
+        // 删除功能：
+        // 点击删除：因为是动态添加的，所以需要用事件委托
+        $('#articleContainer').on('click', '.del', function() {
+
+            if (window.confirm('确认要删除吗？') == false) {
+                return
+            }
+            var id = $(this).attr('data-del-id');
+            console.log(id);
+            // 调用接口：传入参数
+            article.del(id, function(res) {
+                console.log(res);
+                if (res.code == 200) {
+                    getAndshow();
+                }
+
+
+            })
+
+
+        })
+    </script>
+
 </body>
 
-</html>
+</html>7
