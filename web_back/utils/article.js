@@ -31,5 +31,25 @@ var article = {
 
       }
     })
+  },
+  getDetail: function(id, callback) {
+    $.get(APIURLS.article_show, {
+      id: id
+    }, function(res) {
+      callback(res);
+    })
+  },
+  edit: function(fd, callback) {
+    $.ajax({
+      url: APIURLS.article_edit,
+      type: 'post',
+      data: fd,
+      processData: false, // 不要让jquery去处理formdata数据
+      contentType: false, // 不要使用默认的请求头
+      success: function(res) {
+        callback(res)
+
+      }
+    })
   }
 }

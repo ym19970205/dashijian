@@ -23,29 +23,30 @@
             文章编辑
         </div>
         <div class="container-fluid common_con">
-            <form class="form-horizontal article_form">
+            <form class="form-horizontal article_form" id="myform">
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章标题：</label>
                     <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputEmail3" value="文章标题文字">
+                        <input type="text" class="form-control" name="title" id="article_title" value="文章标题文字">
+
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">文章封面：</label>
                     <div class="col-sm-10">
-                        <img src="images/pic06.jpg" class="article_cover">
-                        <input type="file" id="exampleInputFile">
+                        <img src="images/pic06.jpg" class="article_cover" id="article_cover">
+                        <input type="file" id="exampleInputFile" name="cover">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章类别：</label>
                     <div class="col-sm-4">
-                        <select class="form-control">
-                            <option>类别一</option>
+                        <select class="form-control" id="articleContainer" name="type">
+                            <!-- <option>类别一</option>
                             <option>类别二</option>
                             <option>类别三</option>
                             <option selected>类别四</option>
-                            <option>类别五</option>
+                            <option>类别五</option> -->
                         </select>
                     </div>
                 </div>
@@ -54,7 +55,7 @@
                     <div class="col-sm-4">
 
                         <div class="input-group">
-                            <input type="text" class="form-control" value="2019-05-17" id="dateinput">
+                            <input type="text" class="form-control" value="2019-05-17" id="article_date" name="date">
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="button"
                                     onclick="jeDate('#dateinput',{trigger:false,format: 'YYYY-MM-DD'})"><i
@@ -71,12 +72,72 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success">修改</button>
+                        <button type="button" class="btn btn-success" id="btnAdd">修改</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
+
+    <script src="./js/config.js"></script>
+    <script src="./utils/category.js"></script>
+    <script src="./utils/article.js"></script>
+    <script src="./js/template-web.js"></script>
+
+    <!-- 模板引擎： -->
+    <script id="tem-cate" type="text/html">
+        {{each data item}}
+        <option value="{{item.id}}">{{item.name}}</option>
+        {{/each}}
+
+    </script>
+    <!-- 获取文章类别： -->
+    <script>
+        // 1.把id值取出来
+        var id = window.location.search.substr(4);
+        // console.log(id);
+
+        // 2. 用id值直接调用接口
+        article.getDetail(id, function(res) {
+            console.log(res);
+            // 3. 把获取到的值渲染到页面中
+            $('#article_title').val(res.data.title);
+            $('#article_cover').prop('src', res.data.cover);
+            $('#article_date').val(res.data.date);
+            $('#rich_content').val(res.data.content);
+            var typeId = res.data.type;
+
+            // 4. 调用文章类别的接口
+            // 4.1 需要调用获取文章类别的接口
+            // 4.2 需要有一个选中文章类别的功能
+            // 使用模板引擎
+            category.show(function(res) {
+                var htmlStr = template('tem-cate', res);
+                console.log(htmlStr);
+                // 4.3 把获取到的文章的类别添加到相应的位置
+                $('#articleContainer').html(htmlStr);
+
+                $('#articleContainer').val(typeId);
+            })
+
+        })
+
+        $('#btnAdd').click(function() {
+            var fd = new FormData(document.getElementById('myform'));
+            fd.append("id", id);
+            fd.set('content', tinyMCE.activeEditor.getContent());
+            article.edit(fd, function(res) {
+                if (res.code === 200) {
+                    alert('修改成功')
+                } else {
+                    alert(res.msg)
+                }
+
+            })
+
+
+        })
+    </script>
 
 </body>
 
