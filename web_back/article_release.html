@@ -33,7 +33,10 @@
                 <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">文章封面：</label>
                     <div class="col-sm-10">
-                        <input type="file" name="cover" id="exampleInputFile">
+                        <input type="file" name="cover" id="coverImg">
+                    </div>
+                    <div>
+                        <img id="previewImg" src="" style="height: 200px;" alt="">
                     </div>
                 </div>
                 <div class="form-group">
@@ -75,7 +78,58 @@
             </form>
         </div>
     </div>
+    <script src="./js/config.js"></script>
+    <script src="./utils/category.js"></script>
+    <script src="./utils/article.js"></script>
+    <script src="./js/template-web.js"></script>
+    <script type="text/html" id="tem-cate">
+        {{each data item}}
+        <option value="{{item.id}}">{{item.name}}</option>
+        {{/each}}
+    </script>
     <script>
+        // 1.获取文章类别，调用文章类别的方法
+        // 用模板引擎得到数据
+        category.show(function(res) {
+            console.log(res);
+            var htmlStr = template('tem-cate', res);
+            // console.log(htmlStr);
+            $('#categoryContainer').html(htmlStr)
+        })
+
+        // 图片的预览显示：
+        $('#coverImg').change(function() {
+            console.dir(this);
+            // 这张图片的地址：
+            var file = this.files[0];
+            if (file) {
+                // 生成一个临时的地址：
+                var url = URL.createObjectURL(file)
+                    // console.log(url);
+                $('#previewImg').prop('src', url)
+
+            }
+
+        })
+
+        // 2.添加发布的点击事件
+        $('#btnAdd').click(function() {
+            // 获取表单内容用formData来获取：
+            var fd = new FormData(document.getElementById('myform'));
+            fd.append('state', '已发布');
+            fd.set('content', tinyMCE.activeEditor.getContent())
+            console.log(fd.get('title'));
+
+            article.add(fd, function(res) {
+                if (res.code === 201) {
+                    alert('添加成功')
+                } else {
+                    alert(res.msg)
+                }
+
+            })
+
+        })
     </script>
 
 </body>
