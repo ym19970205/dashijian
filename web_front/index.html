@@ -241,7 +241,7 @@
     </li>
     {{else}}
     <li>
-        <a href="./article.html?id='{{item.id}}'" target="_blank"><img src="{{item.cover}}" alt=""></a>
+        <a href="./article.html?id={{item.id}}" target="_blank"><img src="{{item.cover}}" alt=""></a>
         <p>{{item.title}}</p>
     </li>
     {{/if}} {{/each}}
@@ -259,13 +259,14 @@
         // 2.获取焦点图
         // 2.1用模板引擎显示到对应的位置
     article.getFiveFocus(function(res) {
-        console.log(res);
-        var htmlStr = template('temp-focus', res);
-        console.log(htmlStr);
-        $('#focus_list').html(htmlStr)
+            console.log(res);
+            var htmlStr = template('temp-focus', res);
+            console.log(htmlStr);
+            $('#focus_list').html(htmlStr)
 
-
-    })
+        })
+        // 3.我们需要点击每张图片来获取文章的详细信息
+        // 3.1 首先在网站上设置一个id,把id值传过去，然后在第二个页面获取id值
 </script>
 </body>
 
